@@ -687,7 +687,7 @@ function showReview(result, wasAuto){
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function escapeAttr(s){ return escapeHtml(s); }
 
- let githubPapers = [];
+ // let githubPapers = [];
 
 function render(){
   if (view === 'login') renderLogin();
