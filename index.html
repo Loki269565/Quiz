@@ -69,14 +69,7 @@
 
 <script>
 /* ---------- storage helpers ---------- */
-  let githubPapers = [];
 
-fetch("https://raw.githubusercontent.com/Loki269565/Quiz/main/data/papers.json")
-.then(response => response.json())
-.then(data => {
-    githubPapers = data;
-    render();
-});
 const DB = {
   get results(){ return JSON.parse(localStorage.getItem('examapp_results') || '[]'); },
   set results(v){ localStorage.setItem('examapp_results', JSON.stringify(v)); },
@@ -85,22 +78,25 @@ const DB = {
 };
 
 /* sample paper seeded on first run */
-if (DB.papers.length === 0){
-  DB.papers = [{
-    id: 'sample1',
-    title: 'DSSSB Mock Test 1',
-    sections: [
-      { name: 'Mental Ability', durationMinutes: 5, questions: [
-        { q: 'What is the value of Pi?', options: ['3.43','3','2.47','3.14'], answer: 3, marks: 1, negative: 0.25 },
-        { q: 'Find the odd one out: 4, 9, 16, 25, 30', options: ['4','16','25','30'], answer: 3, marks: 1, negative: 0.25 },
-        { q: 'Complete the series: 2, 6, 12, 20, 30, ?', options: ['36','40','42','44'], answer: 2, marks: 1, negative: 0.25 }
-      ]},
-      { name: 'General Awareness', durationMinutes: 3, questions: [
-        { q: 'Who is the first Prime Minister of India?', options: ['Mahatma Gandhi','Jawaharlal Nehru','Sardar Patel','Rajendra Prasad'], answer: 1, marks: 1, negative: 0.25 },
-        { q: 'The Sun rises in the:', options: ['North','South','East','West'], answer: 2, marks: 1, negative: 0.25 }
-      ]}
-    ]
-  }];
+// if (DB.papers.length === 0){
+//   DB.papers = [{
+//     id: 'sample1',
+//     title: 'DSSSB Mock Test 1',
+//     sections: [
+//       { name: 'Mental Ability', durationMinutes: 5, questions: [
+//         { q: 'What is the value of Pi?', options: ['3.43','3','2.47','3.14'], answer: 3, marks: 1, negative: 0.25 },
+//         { q: 'Find the odd one out: 4, 9, 16, 25, 30', options: ['4','16','25','30'], answer: 3, marks: 1, negative: 0.25 },
+//         { q: 'Complete the series: 2, 6, 12, 20, 30, ?', options: ['36','40','42','44'], answer: 2, marks: 1, negative: 0.25 }
+//       ]},
+//       { name: 'General Awareness', durationMinutes: 3, questions: [
+//         { q: 'Who is the first Prime Minister of India?', options: ['Mahatma Gandhi','Jawaharlal Nehru','Sardar Patel','Rajendra Prasad'], answer: 1, marks: 1, negative: 0.25 },
+//         { q: 'The Sun rises in the:', options: ['North','South','East','West'], answer: 2, marks: 1, negative: 0.25 }
+//       ]}
+//     ]
+//   }];
+// }
+ if (!githubPapers) {
+    githubPapers = [];
 }
 function paperTotalMinutes(p){
   return p.sections.reduce((sum, s) => sum + (s.durationMinutes || 30), 0);
@@ -113,6 +109,15 @@ let timerHandle = null;
 let editingPaper = null;
 
 const app = document.getElementById('app');
+
+   let githubPapers = [];
+
+fetch("https://raw.githubusercontent.com/Loki269565/Quiz/main/data/papers.json")
+.then(response => response.json())
+.then(data => {
+    githubPapers = data;
+    render();
+});
 
 function nav(v){ view = v; render(); }
 
@@ -226,7 +231,7 @@ function renderResults(){
 
 /* ---------- ADMIN ---------- */
 function renderAdmin(){
-const papers = DB.papers;
+const papers = githubPapers || [];
  app.innerHTML = `
     ${topbarHTML()}
     <div class="page">
