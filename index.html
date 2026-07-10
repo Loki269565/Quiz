@@ -95,9 +95,9 @@ const DB = {
 //     ]
 //   }];
 // }
- if (!githubPapers) {
-    githubPapers = [];
-}
+//  if (!githubPapers) {
+//     githubPapers = [];
+// }
 function paperTotalMinutes(p){
   return p.sections.reduce((sum, s) => sum + (s.durationMinutes || 30), 0);
 }
