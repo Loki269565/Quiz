@@ -70,11 +70,28 @@
 <script>
 /* ---------- storage helpers ---------- */
 
+let githubPapers = [];
+
 const DB = {
-  get results(){ return JSON.parse(localStorage.getItem('examapp_results') || '[]'); },
-  set results(v){ localStorage.setItem('examapp_results', JSON.stringify(v)); },
-  get currentUser(){ return JSON.parse(localStorage.getItem('examapp_currentUser') || 'null'); },
-  set currentUser(v){ localStorage.setItem('examapp_currentUser', JSON.stringify(v)); }
+  get papers(){
+    return githubPapers;
+  },
+
+  get results(){
+    return JSON.parse(localStorage.getItem('examapp_results') || '[]');
+  },
+
+  set results(v){
+    localStorage.setItem('examapp_results', JSON.stringify(v));
+  },
+
+  get currentUser(){
+    return JSON.parse(localStorage.getItem('examapp_currentUser') || 'null');
+  },
+
+  set currentUser(v){
+    localStorage.setItem('examapp_currentUser', JSON.stringify(v));
+  }
 };
 
 /* sample paper seeded on first run */
@@ -110,14 +127,7 @@ let editingPaper = null;
 
 const app = document.getElementById('app');
 
-   let githubPapers = [];
 
-fetch("https://raw.githubusercontent.com/Loki269565/Quiz/main/data/papers.json")
-.then(response => response.json())
-.then(data => {
-    githubPapers = data;
-    render();
-});
 
 function nav(v){ view = v; render(); }
 
@@ -428,8 +438,8 @@ function addQuestionPrompt(sectionIdx){
 
 /* ---------- TEST TAKING ---------- */
 function startTest(paperId){
-  const paper = DB.papers.find(p => p.id === paperId);
-  testState = {
+const paper = githubPapers.find(p => p.id === paperId);
+ testState = {
     paper,
     sectionIdx: 0,
     qIdx: 0,
@@ -677,7 +687,8 @@ function showReview(result, wasAuto){
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function escapeAttr(s){ return escapeHtml(s); }
 
-/* ---------- router ---------- */
+ let githubPapers = [];
+
 function render(){
   if (view === 'login') renderLogin();
   else if (view === 'dashboard') renderDashboard();
@@ -685,7 +696,18 @@ function render(){
   else if (view === 'admin') renderAdmin();
   else if (view === 'test') renderTest();
 }
-render();
+
+fetch("https://raw.githubusercontent.com/Loki269565/Quiz/main/data/papers.json")
+.then(response => response.json())
+.then(data => {
+    githubPapers = data;
+    render();
+})
+.catch(error => {
+    console.error("GitHub JSON error:", error);
+    githubPapers = [];
+    render();
+});
 </script>
 </body>
 </html>
