@@ -697,16 +697,33 @@ function render(){
   else if (view === 'test') renderTest();
 }
 
-fetch("https://raw.githubusercontent.com/Loki269565/Quiz/main/data/papers.json")
+fetch("https://api.github.com/repos/Loki269565/Quiz/contents/data")
 .then(response => response.json())
-.then(data => {
-    githubPapers = data;
+.then(files => {
+
+    let jsonFiles = files.filter(file => 
+        file.name.endsWith(".json")
+    );
+
+    return Promise.all(
+        jsonFiles.map(file =>
+            fetch(file.download_url)
+            .then(response => response.json())
+        )
+    );
+
+})
+.then(allPapers => {
+
+    githubPapers = allPapers.flatMap(item => {
+        return Array.isArray(item) ? item : [item];
+    });
+
     render();
+
 })
 .catch(error => {
-    console.error("GitHub JSON error:", error);
-    githubPapers = [];
-    render();
+    console.error("GitHub loading error:", error);
 });
 </script>
 </body>
