@@ -69,9 +69,15 @@
 
 <script>
 /* ---------- storage helpers ---------- */
+  let githubPapers = [];
+
+fetch("https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/data/papers.json")
+.then(response => response.json())
+.then(data => {
+    githubPapers = data;
+    render();
+});
 const DB = {
-  get papers(){ return JSON.parse(localStorage.getItem('examapp_papers') || '[]'); },
-  set papers(v){ localStorage.setItem('examapp_papers', JSON.stringify(v)); },
   get results(){ return JSON.parse(localStorage.getItem('examapp_results') || '[]'); },
   set results(v){ localStorage.setItem('examapp_results', JSON.stringify(v)); },
   get currentUser(){ return JSON.parse(localStorage.getItem('examapp_currentUser') || 'null'); },
@@ -163,8 +169,8 @@ function wireTopbar(){
 
 /* ---------- STUDENT DASHBOARD ---------- */
 function renderDashboard(){
-  const papers = DB.papers;
-  app.innerHTML = `
+const papers = githubPapers;
+ app.innerHTML = `
     ${topbarHTML()}
     <div class="page">
       <h3>Available tests</h3>
@@ -220,8 +226,8 @@ function renderResults(){
 
 /* ---------- ADMIN ---------- */
 function renderAdmin(){
-  const papers = DB.papers;
-  app.innerHTML = `
+const papers = DB.papers;
+ app.innerHTML = `
     ${topbarHTML()}
     <div class="page">
       <h3>Manage tests</h3>
